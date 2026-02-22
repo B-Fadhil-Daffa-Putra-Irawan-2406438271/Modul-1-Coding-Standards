@@ -47,13 +47,13 @@ jobs:
           ./gradlew test jacocoTestReport || ./gradlew test
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          with:
-            args: >
-              -Dsonar.organization=b-fadhil-daffa-putra-irawan-2406438271
-              -Dsonar.projectKey=B-Fadhil-Daffa-Putra-Irawan-2406438271_Modul-1-Coding-Standards
-              -Dsonar.sources=.
-              -Dsonar.java.binaries=build/classes
-              -Dsonar.qualitygate.wait=true
+        with:
+          args: >
+            -Dsonar.organization=b-fadhil-daffa-putra-irawan-2406438271
+            -Dsonar.projectKey=B-Fadhil-Daffa-Putra-Irawan-2406438271_Modul-1-Coding-Standards
+            -Dsonar.sources=.
+            -Dsonar.java.binaries=build/classes
+            -Dsonar.qualitygate.wait=true
