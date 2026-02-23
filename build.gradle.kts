@@ -3,7 +3,7 @@ plugins {
 	jacoco
 	id("org.springframework.boot") version "3.5.10"
 	id("io.spring.dependency-management") version "1.1.7"
-	id("org.sonarqube") version "7.1.0.6387"
+	pmd
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -13,7 +13,6 @@ val seleniumJavaVersion = "4.14.1"
 val seleniumJupiterVersion = "5.0.1"
 val webdrivermanagerVersion = "5.6.3"
 val junitJupiterVersion = "5.9.1"
-
 
 java {
 	toolchain {
@@ -65,7 +64,7 @@ tasks.register<Test>("functionalTest") {
 	}
 }
 
-tasks.test{
+tasks.test {
 	filter {
 		excludeTestsMatching("*FunctionalTest")
 	}
@@ -81,12 +80,8 @@ tasks.withType<Test>().configureEach {
 	useJUnitPlatform()
 }
 
-sonar {
-	properties {
-		property("sonar.projectKey", "B-Fadhil-Daffa-Putra-Irawan-2406438271_Modul-1-Coding-Standards")
-		property("sonar.organization", "b-fadhil-daffa-putra-irawan-2406438271")
-		property("sonar.qualitygate.wait", "true")
-	}
+// --- Konfigurasi PMD ---
+pmd {
+	consoleOutput = true
+	toolVersion = "7.0.0"
 }
-
-

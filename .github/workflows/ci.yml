@@ -28,28 +28,22 @@ jobs:
           chmod +x ./gradlew
           ./gradlew test
 
-  sonarcloud:
-    name: SonarCloud scan
+  pmd:
+    name: PMD Static Analysis
     runs-on: ubuntu-22.04
     needs: test
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Check out the Git repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Set up Java toolchain
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "21"
           cache: "gradle"
 
-      - name: SonarCloud Scan (Gradle)
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Run PMD Analysis
         run: |
           chmod +x ./gradlew
-          ./gradlew clean test sonar --info \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.organization=b-fadhil-daffa-putra-irawan-2406438271 \
-            -Dsonar.projectKey=B-Fadhil-Daffa-Putra-Irawan-2406438271_Modul-1-Coding-Standards \
-            -Dsonar.qualitygate.wait=false
+          ./gradlew pmdMain pmdTest
