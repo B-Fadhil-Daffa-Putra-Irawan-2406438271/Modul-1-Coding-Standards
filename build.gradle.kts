@@ -3,6 +3,7 @@ plugins {
 	jacoco
 	id("org.springframework.boot") version "3.5.10"
 	id("io.spring.dependency-management") version "1.1.7"
+	pmd
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -12,7 +13,6 @@ val seleniumJavaVersion = "4.14.1"
 val seleniumJupiterVersion = "5.0.1"
 val webdrivermanagerVersion = "5.6.3"
 val junitJupiterVersion = "5.9.1"
-
 
 java {
 	toolchain {
@@ -64,7 +64,7 @@ tasks.register<Test>("functionalTest") {
 	}
 }
 
-tasks.test{
+tasks.test {
 	filter {
 		excludeTestsMatching("*FunctionalTest")
 	}
@@ -80,5 +80,8 @@ tasks.withType<Test>().configureEach {
 	useJUnitPlatform()
 }
 
-
-
+// --- Konfigurasi PMD ---
+pmd {
+	isConsoleOutput = true
+	toolVersion = "7.0.0"
+}

@@ -1,9 +1,12 @@
 name: Continuous Integration (CI)
 
-## Run CI jobs on all branches by default
 on:
   push:
+    branches:
+      - "**"
   pull_request:
+    branches:
+      - "**"
 
 jobs:
   test:
@@ -12,13 +15,35 @@ jobs:
     steps:
       - name: Check out the Git repository
         uses: actions/checkout@v4
+
       - name: Set up Java toolchain
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "21"
           cache: "gradle"
+
       - name: Run unit tests
         run: |
           chmod +x ./gradlew
           ./gradlew test
+
+  pmd:
+    name: PMD Static Analysis
+    runs-on: ubuntu-22.04
+    needs: test
+    steps:
+      - name: Check out the Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java toolchain
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+          cache: "gradle"
+
+      - name: Run PMD Analysis
+        run: |
+          chmod +x ./gradlew
+          ./gradlew pmdMain pmdTest
