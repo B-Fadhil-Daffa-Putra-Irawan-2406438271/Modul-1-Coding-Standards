@@ -19,6 +19,8 @@ import static org.mockito.Mockito.*;
 @Import(ProductServiceImpl.class)
 class ProductServiceImplTest {
 
+    private static final String TEST_ID = "P001";
+
     @Autowired
     private ProductServiceImpl service;
 
@@ -44,20 +46,20 @@ class ProductServiceImplTest {
 
     @Test
     void delete_shouldDelegateToRepository() {
-        service.delete("P001");
-        verify(productRepository, times(1)).delete("P001");
+        service.delete(TEST_ID);
+        verify(productRepository, times(1)).delete(TEST_ID);
         verifyNoMoreInteractions(productRepository);
     }
 
     @Test
     void findById_shouldReturnRepositoryResult() {
         Product p = new Product();
-        when(productRepository.findById("P001")).thenReturn(p);
+        when(productRepository.findById(TEST_ID)).thenReturn(p);
 
-        Product result = service.findById("P001");
+        Product result = service.findById(TEST_ID);
 
         assertThat(result).isSameAs(p);
-        verify(productRepository, times(1)).findById("P001");
+        verify(productRepository, times(1)).findById(TEST_ID);
         verifyNoMoreInteractions(productRepository);
     }
 
