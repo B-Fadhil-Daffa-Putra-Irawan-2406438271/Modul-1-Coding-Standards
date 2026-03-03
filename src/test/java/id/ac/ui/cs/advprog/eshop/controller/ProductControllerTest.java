@@ -123,7 +123,7 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:list"));
 
-        verify(service, times(1)).edit(any(Product.class));
+        verify(service, times(1)).update(any(Product.class));
         verifyNoMoreInteractions(service);
     }
 
@@ -133,7 +133,7 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:../list"));
 
-        verify(service, times(1)).delete(TEST_ID);
+        verify(service, times(1)).deleteProductById(TEST_ID);
         verifyNoMoreInteractions(service);
     }
 }

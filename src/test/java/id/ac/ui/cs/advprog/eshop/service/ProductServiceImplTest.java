@@ -46,7 +46,7 @@ class ProductServiceImplTest {
 
     @Test
     void delete_shouldDelegateToRepository() {
-        service.delete(TEST_ID);
+        service.deleteProductById(TEST_ID);
         verify(productRepository, times(1)).delete(TEST_ID);
         verifyNoMoreInteractions(productRepository);
     }
@@ -70,7 +70,7 @@ class ProductServiceImplTest {
 
         when(productRepository.edit(p)).thenReturn(edited);
 
-        Product result = service.edit(p);
+        Product result = service.update(p);
 
         assertThat(result).isSameAs(edited);
         verify(productRepository, times(1)).edit(p);
