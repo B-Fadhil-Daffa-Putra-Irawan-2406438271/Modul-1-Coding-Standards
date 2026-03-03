@@ -67,7 +67,7 @@ public class ProductController {
 @RequestMapping("/car")
 class CarController extends ProductController{
     @Autowired
-    private CarServiceImpl carService;
+    private CarService carService;
 
     @GetMapping("/createCar")
     public String createCarPage(Model model){
