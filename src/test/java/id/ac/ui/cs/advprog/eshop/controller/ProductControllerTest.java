@@ -1,8 +1,9 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.service.ProductService;
-import id.ac.ui.cs.advprog.eshop.service.CarService;
+import id.ac.ui.cs.advprog.eshop.service.CarWriterService;
+import id.ac.ui.cs.advprog.eshop.service.ProductReaderService;
+import id.ac.ui.cs.advprog.eshop.service.ProductWriterService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,13 @@ class ProductControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private ProductService service;
+    private ProductReaderService serviceRead;
 
     @MockBean
-    private CarService carService;
+    private ProductWriterService serviceWriter;
+
+    @MockBean
+    private CarWriterService carService;
 
     @Test
     void getCreatePage_shouldReturnCreateProductView_andPutEmptyProductInModel() throws Exception {
@@ -50,7 +54,7 @@ class ProductControllerTest {
                 .andExpect(model().attributeExists(ATTR_PRODUCT))
                 .andExpect(model().attribute(ATTR_PRODUCT, org.hamcrest.Matchers.instanceOf(Product.class)));
 
-        verifyNoInteractions(service);
+        verifyNoInteractions(serviceWriter);
     }
 
     @Test
@@ -63,10 +67,10 @@ class ProductControllerTest {
                 .andExpect(view().name("redirect:list"));
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
-        verify(service, times(1)).create(captor.capture());
+        verify(serviceWriter, times(1)).create(captor.capture());
         Product sent = captor.getValue();
         assertThat(sent).isNotNull();
-        verifyNoMoreInteractions(service);
+        verifyNoMoreInteractions(serviceWriter);
     }
 
     @Test
@@ -75,7 +79,7 @@ class ProductControllerTest {
         Product p2 = new Product();
         List<Product> products = Arrays.asList(p1, p2);
 
-        when(service.findAll()).thenReturn(products);
+        when(serviceRead.findAll()).thenReturn(products);
 
         mockMvc.perform(get("/product/list"))
                 .andExpect(status().isOk())
@@ -83,26 +87,26 @@ class ProductControllerTest {
                 .andExpect(model().attributeExists(ATTR_PRODUCTS))
                 .andExpect(model().attribute(ATTR_PRODUCTS, products));
 
-        verify(service, times(1)).findAll();
-        verifyNoMoreInteractions(service);
+        verify(serviceRead, times(1)).findAll();
+        verifyNoMoreInteractions(serviceRead);
     }
 
     @Test
     void getEdit_whenProductNotFound_shouldRedirectToList() throws Exception {
-        when(service.findById("NOPE")).thenReturn(null);
+        when(serviceRead.findById("NOPE")).thenReturn(null);
 
         mockMvc.perform(get("/product/edit/NOPE"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:../list"));
 
-        verify(service, times(1)).findById("NOPE");
-        verifyNoMoreInteractions(service);
+        verify(serviceRead, times(1)).findById("NOPE");
+        verifyNoMoreInteractions(serviceRead);
     }
 
     @Test
     void getEdit_whenProductFound_shouldReturnEditProductView_andPutProductInModel() throws Exception {
         Product found = new Product();
-        when(service.findById(TEST_ID)).thenReturn(found);
+        when(serviceRead.findById(TEST_ID)).thenReturn(found);
 
         mockMvc.perform(get("/product/edit/" + TEST_ID))
                 .andExpect(status().isOk())
@@ -110,8 +114,8 @@ class ProductControllerTest {
                 .andExpect(model().attributeExists(ATTR_PRODUCT))
                 .andExpect(model().attribute(ATTR_PRODUCT, found));
 
-        verify(service, times(1)).findById(TEST_ID);
-        verifyNoMoreInteractions(service);
+        verify(serviceRead, times(1)).findById(TEST_ID);
+        verifyNoMoreInteractions(serviceRead);
     }
 
     @Test
@@ -123,8 +127,8 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:list"));
 
-        verify(service, times(1)).update(any(Product.class));
-        verifyNoMoreInteractions(service);
+        verify(serviceWriter, times(1)).update(any(Product.class));
+        verifyNoMoreInteractions(serviceWriter);
     }
 
     @Test
@@ -133,7 +137,7 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:../list"));
 
-        verify(service, times(1)).deleteProductById(TEST_ID);
-        verifyNoMoreInteractions(service);
+        verify(serviceWriter, times(1)).deleteProductById(TEST_ID);
+        verifyNoMoreInteractions(serviceWriter);
     }
 }

@@ -19,7 +19,7 @@ class ProductRepositoryTest {
     private static final String PRODUCT_USEP = "Sampo Cap Usep";
 
     @InjectMocks
-    ProductRepository productRepository;
+    ProductRepositoryImpl productRepository;
 
     @BeforeEach
     void setUp() {

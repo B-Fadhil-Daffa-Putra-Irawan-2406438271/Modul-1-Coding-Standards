@@ -11,31 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ProductServiceImpl implements ProductService{
-
+public class ProductReaderServiceImpl implements ProductReaderService {
     @Autowired
     private ProductRepository productRepository;
 
     @Override
-    public Product create(Product product){
-        product.setProductId(UUID.randomUUID().toString());
-        productRepository.create(product);
-        return product;
-    }
-
-    @Override
-    public void deleteProductById(String productId) {
-        productRepository.delete(productId);
-    }
-
-    @Override
     public Product findById(String id){
         return productRepository.findById(id);
-    }
-
-    @Override
-    public Product update(Product product) {
-        return productRepository.edit(product);
     }
 
     @Override
