@@ -38,6 +38,9 @@ class ProductControllerTest {
     @MockBean
     private ProductService service;
 
+    @MockBean
+    private CarService carService;
+
     @Test
     void getCreatePage_shouldReturnCreateProductView_andPutEmptyProductInModel() throws Exception {
         mockMvc.perform(get("/product/create"))
