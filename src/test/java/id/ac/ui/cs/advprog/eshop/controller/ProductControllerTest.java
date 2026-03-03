@@ -2,6 +2,7 @@ package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.service.ProductService;
+import id.ac.ui.cs.advprog.eshop.service.CarService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ class ProductControllerTest {
 
     @MockBean
     private ProductService service;
+
+    @MockBean
+    private CarService carService;
 
     @Test
     void getCreatePage_shouldReturnCreateProductView_andPutEmptyProductInModel() throws Exception {
