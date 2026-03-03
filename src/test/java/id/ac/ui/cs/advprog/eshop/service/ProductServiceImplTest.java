@@ -1,7 +1,7 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.repository.ProductRepository;
+import id.ac.ui.cs.advprog.eshop.repository.ProductRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,22 +16,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@Import(ProductServiceImpl.class)
+@Import(ProductWriterServiceImpl.class)
 class ProductServiceImplTest {
 
     private static final String TEST_ID = "P001";
 
     @Autowired
-    private ProductServiceImpl service;
+    private ProductWriterService serviceWrite;
+
+    @Autowired
+    private ProductReaderService serviceRead;
 
     @MockBean
-    private ProductRepository productRepository;
+    private ProductRepositoryImpl productRepository;
 
     @Test
     void create_shouldSetRandomUUID_callRepositoryCreate_andReturnProduct() {
         Product p = new Product();
 
-        Product result = service.create(p);
+        Product result = serviceWrite.create(p);
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository, times(1)).create(captor.capture());
@@ -46,7 +49,7 @@ class ProductServiceImplTest {
 
     @Test
     void delete_shouldDelegateToRepository() {
-        service.deleteProductById(TEST_ID);
+        serviceWrite.deleteProductById(TEST_ID);
         verify(productRepository, times(1)).delete(TEST_ID);
         verifyNoMoreInteractions(productRepository);
     }
@@ -56,7 +59,7 @@ class ProductServiceImplTest {
         Product p = new Product();
         when(productRepository.findById(TEST_ID)).thenReturn(p);
 
-        Product result = service.findById(TEST_ID);
+        Product result = serviceRead.findById(TEST_ID);
 
         assertThat(result).isSameAs(p);
         verify(productRepository, times(1)).findById(TEST_ID);
@@ -70,7 +73,7 @@ class ProductServiceImplTest {
 
         when(productRepository.edit(p)).thenReturn(edited);
 
-        Product result = service.update(p);
+        Product result = serviceWrite.update(p);
 
         assertThat(result).isSameAs(edited);
         verify(productRepository, times(1)).edit(p);
@@ -86,7 +89,7 @@ class ProductServiceImplTest {
         Iterator<Product> iterator = repoList.iterator();
         when(productRepository.findAll()).thenReturn(iterator);
 
-        List<Product> result = service.findAll();
+        List<Product> result = serviceRead.findAll();
 
         assertThat(result).containsExactly(p1, p2);
         verify(productRepository, times(1)).findAll();
