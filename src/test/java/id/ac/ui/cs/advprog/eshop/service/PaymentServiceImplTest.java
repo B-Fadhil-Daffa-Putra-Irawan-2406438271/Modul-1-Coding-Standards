@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public class PaymentServiceImplTest {
     PaymentRepository paymentRepository;
 
     Order order;
+    Map<String, String> validPaymentData;
 
     @BeforeEach
     void setUp() {
@@ -39,13 +39,17 @@ public class PaymentServiceImplTest {
         product.setProductQuantity(10);
         products.add(product);
 
-        this.order = new Order("id-order", products, 0L, "PENDING");
+        this.order = new Order("id-order", products, 0L, "WAITING_PAYMENT");
+
+        // Bikin data map yang valid buat ngelewatin validasi constructor Payment
+        validPaymentData = new HashMap<>();
+        validPaymentData.put("voucherCode", "ESHOP12345678901"); // 16 Karakter + Awalan ESHOP
     }
 
     @Test
     void testSetStatusPaymentAndOrderSuccess() {
-        Map<String, String> data = new HashMap<>();
-        Payment payment = new Payment("pay-001", "VOUCHER", "REJECTED", data);
+        // PAKE validPaymentData, JANGAN new HashMap<>()
+        Payment payment = new Payment("pay-001", "VOUCHER", "REJECTED", validPaymentData);
 
         paymentService.setStatus(payment, order, "SUCCESS");
 
@@ -55,7 +59,8 @@ public class PaymentServiceImplTest {
 
     @Test
     void testSetStatusPaymentRejectedUpdatesOrderToFailed() {
-        Payment payment = new Payment("pay-001", "VOUCHER", "SUCCESS", new HashMap<>());
+        // PAKE validPaymentData
+        Payment payment = new Payment("pay-001", "VOUCHER", "SUCCESS", validPaymentData);
 
         paymentService.setStatus(payment, order, "REJECTED");
 
@@ -65,8 +70,8 @@ public class PaymentServiceImplTest {
 
     @Test
     void testFindPaymentByIdHappyPath() {
-        Map<String, String> data = new HashMap<>();
-        Payment payment = new Payment("pay-001", "VOUCHER", "SUCCESS", data);
+        // PAKE validPaymentData
+        Payment payment = new Payment("pay-001", "VOUCHER", "SUCCESS", validPaymentData);
 
         doReturn(payment).when(paymentRepository).findById("pay-001");
 
@@ -90,8 +95,9 @@ public class PaymentServiceImplTest {
     @Test
     void testGetAllPaymentsHappyPath() {
         List<Payment> payments = new ArrayList<>();
-        payments.add(new Payment("pay-1", "VOUCHER", "SUCCESS", new HashMap<>()));
-        payments.add(new Payment("pay-2", "VOUCHER", "REJECTED", new HashMap<>()));
+        // PAKE validPaymentData
+        payments.add(new Payment("pay-1", "VOUCHER", "SUCCESS", validPaymentData));
+        payments.add(new Payment("pay-2", "VOUCHER", "REJECTED", validPaymentData));
 
         doReturn(payments).when(paymentRepository).findAllPayments();
 
@@ -103,7 +109,6 @@ public class PaymentServiceImplTest {
 
     @Test
     void testSetStatusWithNullArgumentsThrowsException() {
-        // Mengetes defensive programming di REFACTOR commit sebelumnya
         assertThrows(IllegalArgumentException.class, () -> {
             paymentService.setStatus(null, null, "SUCCESS");
         });
@@ -112,7 +117,7 @@ public class PaymentServiceImplTest {
     @Test
     void testAddPaymentWithNullOrderThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            paymentService.addPayment(null, "VOUCHER", new HashMap<>());
+            paymentService.addPayment(null, "VOUCHER", validPaymentData); // Biar tetep konsisten
         });
     }
 }

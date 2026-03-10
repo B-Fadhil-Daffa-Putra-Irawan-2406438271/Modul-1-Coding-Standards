@@ -18,10 +18,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
-        if (order == null)
-            throw new IllegalArgumentException();
+        if (order == null) throw new IllegalArgumentException();
 
-        Payment payment = new Payment(UUID.randomUUID().toString(), method, "REJECTED", paymentData);
+        String status = paymentData.getOrDefault("status", "REJECTED");
+        Payment payment = new Payment(UUID.randomUUID().toString(), method, status, paymentData);
+        this.setStatus(payment, order, status);
         return paymentRepository.save(payment);
     }
 
@@ -37,10 +38,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void setStatus(Payment payment, Order order, String status) {
+        if (payment == null || order == null || status == null) {
+            throw new IllegalArgumentException("Arguments cannot be null");
+        }
+
         payment.setStatus(status);
-        if ("SUCCESS".equals(status)) {
+
+        if (status.equals("SUCCESS")) {
             order.setStatus("SUCCESS");
-        } else {
+        } else if (status.equals("REJECTED")) {
             order.setStatus("FAILED");
         }
     }
