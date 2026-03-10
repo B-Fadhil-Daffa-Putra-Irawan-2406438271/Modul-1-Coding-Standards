@@ -93,12 +93,12 @@ public class PaymentServiceImplTest {
         payments.add(new Payment("pay-1", "VOUCHER", "SUCCESS", new HashMap<>()));
         payments.add(new Payment("pay-2", "VOUCHER", "REJECTED", new HashMap<>()));
 
-        doReturn(payments).when(paymentRepository).findAll();
+        doReturn(payments).when(paymentRepository).findAllPayments();
 
         List<Payment> result = paymentService.getAllPayments();
 
         assertEquals(2, result.size());
-        verify(paymentRepository, times(1)).findAll();
+        verify(paymentRepository, times(1)).findAllPayments();
     }
 
     @Test
