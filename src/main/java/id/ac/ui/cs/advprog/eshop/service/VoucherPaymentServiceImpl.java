@@ -18,6 +18,10 @@ public class VoucherPaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
+        if (order == null || paymentData == null) {
+            throw new IllegalArgumentException("Order and Payment Data cannot be null");
+        }
+
         String status = "REJECTED";
         String voucherCode = paymentData.get("voucherCode");
 
@@ -43,6 +47,10 @@ public class VoucherPaymentServiceImpl implements PaymentService {
 
     @Override
     public void setStatus(Payment payment, Order order, String status) {
+        if (payment == null || order == null || status == null) {
+            throw new IllegalArgumentException("Arguments cannot be null");
+        }
+
         payment.setStatus(status);
 
         if ("SUCCESS".equals(status)) {
