@@ -33,16 +33,14 @@ public class PaymentTest {
     void testCreatePaymentEmpty(){
         this.paymentData.clear();
 
-        Payment payment = new Payment("pay-001", "VOUCHER", "SUCCESS", paymentData);
         assertThrows(IllegalArgumentException.class, () -> {
             new Payment("pay-001", "VOUCHER", "SUCCESS", paymentData);
         });
     }
 
     @Test
-    void testPaymentStatusWithoutStatus(){
-        Payment payment = new Payment("pay-001", "VOUCHER", paymentData);
-        assertEquals("REJECTED", payment.getStatus());
+    void testPaymentStatusDoesntExist(){
+        assertThrows(IllegalArgumentException.class, () -> { new Payment("pay-001", "VOUCHER", "Waiting", paymentData); } );
     }
 
 }
