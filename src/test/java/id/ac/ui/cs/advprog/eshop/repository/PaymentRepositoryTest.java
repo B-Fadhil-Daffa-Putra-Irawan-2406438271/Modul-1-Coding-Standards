@@ -47,7 +47,7 @@ public class PaymentRepositoryTest {
         Payment payment2 = new Payment("pay-002", "VOUCHER", "SUCCESS", data2);
         paymentRepository.save(payment2);
 
-        List<Payment> allPayments = paymentRepository.findAll();
+        List<Payment> allPayments = paymentRepository.findAllPayments();
         assertEquals(2, allPayments.size());
     }
 }
