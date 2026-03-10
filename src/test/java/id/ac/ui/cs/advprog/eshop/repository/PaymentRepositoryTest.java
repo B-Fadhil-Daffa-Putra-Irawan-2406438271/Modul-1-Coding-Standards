@@ -1,5 +1,7 @@
 package id.ac.ui.cs.advprog.eshop.repository;
 
+import enums.OrderStatus;
+import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,41 @@ public class PaymentRepositoryTest {
         paymentRepository.save(payment);
         Payment foundPayment = paymentRepository.findById("non-existent-id");
         assertNull(foundPayment);
+    }
+
+    @Test
+    void testSaveDuplicateId() {
+        paymentRepository.save(payment);
+
+        Map<String, String> newData = new HashMap<>();
+        newData.put("voucherCode", "ESHOP11112222333");
+        Payment duplicatePayment = new Payment("pay-001", "VOUCHER", "REJECTED", newData);
+
+        paymentRepository.save(duplicatePayment);
+
+        List<Payment> allPayments = paymentRepository.findAllPayments();
+        assertEquals(1, allPayments.size());
+        assertEquals("REJECTED", paymentRepository.findById("pay-001").getStatus());
+    }
+
+    @Test
+    void testFindByIdWithEmptyRepository() {
+        Payment foundPayment = paymentRepository.findById("any-id");
+        assertNull(foundPayment);
+    }
+
+    @Test
+    void testFindByIdWithNullId() {
+        paymentRepository.save(payment);
+        Payment foundPayment = paymentRepository.findById(null);
+        assertNull(foundPayment);
+    }
+
+    @Test
+    void testSaveNullPayment() {
+        assertThrows(Exception.class, () -> {
+            paymentRepository.save(null);
+        });
     }
 
     @Test

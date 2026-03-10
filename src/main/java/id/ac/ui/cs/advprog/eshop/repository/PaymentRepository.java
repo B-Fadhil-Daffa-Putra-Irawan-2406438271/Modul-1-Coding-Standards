@@ -8,17 +8,35 @@ import java.util.List;
 public class PaymentRepository {
     private final List<Payment> paymentList = new ArrayList<>();
 
-    public Payment save(Payment payment) {
-        return null;
+    public Payment save(Payment payment) throws IllegalArgumentException{
+        if(payment == null) {
+            throw new IllegalArgumentException();
+        }
+
+        int i = 0;
+        for (Payment savedPayment : paymentList) {
+            if (savedPayment.getId().equals(payment.getId())) {
+                paymentList.remove(i);
+                paymentList.add(i, savedPayment);
+                return savedPayment;
+            }
+            i += 1;
+        }
+
+        paymentList.add(payment);
+        return payment;
     }
 
     public Payment findById(String id) {
+        for (Payment savedPayment : paymentList) {
+            if (savedPayment.getId().equals(id)) {
+                return savedPayment;
+            }
+        }
         return null;
-
     }
 
     public List<Payment> findAllPayments(){
-        return null;
-
+        return new ArrayList<>(paymentList);
     }
 }
