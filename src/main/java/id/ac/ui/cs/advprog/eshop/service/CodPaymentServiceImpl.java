@@ -18,12 +18,17 @@ public class CodPaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
-        String status = "REJECTED"; // Default
+        if (order == null || paymentData == null) {
+            throw new IllegalArgumentException("Order and Payment Data cannot be null");
+        }
+
+        String status = "SUCCESS"; // Default sukses dulu
         String address = paymentData.get("address");
         String deliveryFee = paymentData.get("deliveryFee");
 
-        if (address != null && !address.isEmpty() && deliveryFee != null && !deliveryFee.isEmpty()) {
-            status = "SUCCESS";
+        // ATURAN COD: REJECTED kalau salah satu info kosong (empty string atau null)
+        if (address == null || address.trim().isEmpty() || deliveryFee == null || deliveryFee.trim().isEmpty()) {
+            status = "REJECTED";
         }
 
         Payment payment = new Payment(UUID.randomUUID().toString(), method, status, paymentData);
