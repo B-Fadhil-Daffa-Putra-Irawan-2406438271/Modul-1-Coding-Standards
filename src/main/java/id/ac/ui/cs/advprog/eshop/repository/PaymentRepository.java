@@ -17,7 +17,7 @@ public class PaymentRepository {
         for (Payment savedPayment : paymentList) {
             if (savedPayment.getId().equals(payment.getId())) {
                 paymentList.remove(i);
-                paymentList.add(i, savedPayment);
+                paymentList.add(i, payment);
                 return savedPayment;
             }
             i += 1;
